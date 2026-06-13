@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Ledger</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#232323" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <h1>Pocket Ledger</h1>
+      <p class="tagline">Track every rupee, in or out.</p>
+    </header>
+
+    <!-- Time range filter -->
+    <section class="filter-bar" aria-label="Time range">
+      <button type="button" class="filter-btn active" data-filter="today">Today</button>
+      <button type="button" class="filter-btn" data-filter="week">Week</button>
+      <button type="button" class="filter-btn" data-filter="month">Month</button>
+      <button type="button" class="filter-btn" data-filter="all">All time</button>
+      <button type="button" class="filter-btn" data-filter="custom">Custom</button>
+    </section>
+    <div id="custom-range" class="custom-range hidden">
+      <div>
+        <label for="range-from">From</label>
+        <input type="date" id="range-from" />
+      </div>
+      <div>
+        <label for="range-to">To</label>
+        <input type="date" id="range-to" />
+      </div>
+    </div>
+
+    <!-- Summary "receipt" -->
+    <section class="receipt" aria-label="Summary">
+      <div class="receipt__row receipt__row--header">
+        <span id="summary-period">Today</span>
+        <span id="summary-date"></span>
+      </div>
+      <div class="receipt__row">
+        <span class="receipt__label">Income</span>
+        <span class="receipt__dots"></span>
+        <span class="receipt__amount receipt__amount--income" id="total-income">₹0.00</span>
+      </div>
+      <div class="receipt__row">
+        <span class="receipt__label">Expenses</span>
+        <span class="receipt__dots"></span>
+        <span class="receipt__amount receipt__amount--expense" id="total-expense">₹0.00</span>
+      </div>
+      <div class="receipt__row receipt__row--total">
+        <span class="receipt__label">Balance</span>
+        <span class="receipt__dots"></span>
+        <span class="receipt__amount" id="total-balance">₹0.00</span>
+      </div>
+    </section>
+
+    <!-- Savings (all-time) -->
+    <section class="card savings-card">
+      <div class="savings-card__label">Total savings</div>
+      <div class="savings-card__amount" id="savings-amount">₹0.00</div>
+      <p class="savings-card__note">All-time income minus expenses.</p>
+    </section>
+
+    <!-- Add transaction form -->
+    <section class="card">
+      <h2>Add transaction</h2>
+      <form id="transaction-form">
+        <div class="type-toggle" role="group" aria-label="Transaction type">
+          <button type="button" class="type-btn active" data-type="expense">Expense</button>
+          <button type="button" class="type-btn" data-type="income">Income</button>
+        </div>
+
+        <label for="amount">Amount</label>
+        <input type="number" id="amount" name="amount" step="0.01" min="0" required placeholder="0.00" />
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required></select>
+
+        <div id="new-category-row" class="new-category-row hidden">
+          <input type="text" id="new-category-input" placeholder="New category name" />
+          <button type="button" id="add-category-btn" class="btn-secondary">Add</button>
+        </div>
+
+        <label for="note">Note (optional)</label>
+        <input type="text" id="note" name="note" placeholder="e.g. Lunch with friends" />
+
+        <label for="payment-method">Payment method</label>
+        <select id="payment-method" name="paymentMethod">
+          <option value="cash">Cash</option>
+          <option value="online">Online</option>
+        </select>
+
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required />
+
+        <button type="submit" class="btn-primary">Add transaction</button>
+      </form>
+    </section>
+
+    <!-- Transaction history -->
+    <section class="card">
+      <h2 id="list-heading">Transactions — Today</h2>
+      <ul id="transaction-list" class="transaction-list"></ul>
+      <p id="empty-state" class="empty-state">No transactions yet — add your first one above.</p>
+    </section>
+    <!-- Charts -->
+    <section class="card">
+      <h2>Spending by category</h2>
+      <canvas id="category-chart" height="220"></canvas>
+      <p id="category-empty" class="empty-state hidden">No expenses in this period.</p>
+    </section>
+
+    <section class="card">
+      <h2 id="trend-heading">Spending over time</h2>
+      <canvas id="trend-chart" height="220"></canvas>
+    </section>
+
+    <!-- Backup & restore -->
+    <section class="card">
+      <h2>Backup &amp; restore</h2>
+      <p class="backup-note">
+        All your data lives only on this device. Export it to a file you can keep safe or move to another device —
+        and import it back whenever you need to.
+      </p>
+      <div class="backup-actions">
+        <button type="button" id="export-btn" class="btn-secondary">Export backup (.json)</button>
+        <button type="button" id="import-btn" class="btn-secondary">Import backup</button>
+        <input type="file" id="import-file" accept="application/json" class="hidden" />
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>
