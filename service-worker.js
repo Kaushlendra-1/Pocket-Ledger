@@ -16,7 +16,7 @@
   instead of an old cached one.
 --------------------------------------------------------- */
 
-const CACHE_NAME = "pocket-ledger-v4";
+const CACHE_NAME = "pocket-ledger-v5";
 
 const PRECACHE_URLS = [
   "./",
@@ -25,8 +25,8 @@ const PRECACHE_URLS = [
   "./app.js",
   "./db.js",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
+  "./Icons/icon-192.png",
+  "./Icons/icon-512.png",
   "https://cdn.jsdelivr.net/npm/chart.js@4",
   "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap",
 ];
